@@ -1,27 +1,29 @@
 '''
-    Generates ground truth from 20% of users with an LLM.
+    Generates ground truth from 30% of users with an LLM.
 '''
 
 import pandas as pd
 import torch
-from transformers import AutoProcessor, Llama4ForConditionalGeneration, BitsAndBytesConfig
+from transformers import AutoProcessor, Gemma3ForConditionalGeneration, BitsAndBytesConfig
 from sklearn.model_selection import train_test_split
 
-model_name = "meta-llama/Llama-4-Scout-17B-16E-Instruct"
+model_name = "google/gemma-3-12b-it"
 
 bnb_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_compute_dtype=torch.bfloat16,
     bnb_4bit_quant_type="nf4",
-    bnb_4bit_use_double_quant=True
+    bnb_4bit_use_double_quant=True,
 )
 
-processor = AutoProcessor.from_pretrained(model_name)
-model = Llama4ForConditionalGeneration.from_pretrained(
-    model_name, 
+tokenizer = AutoProcessor.from_pretrained(model_name)
+
+
+model = Gemma3ForConditionalGeneration.from_pretrained(
+    model_name,
     quantization_config=bnb_config,
-    device_map="auto", 
-    torch_dtype=torch.bfloat16
+    device_map={"":0},
+    torch_dtype=torch.bfloat16,
 )
 
 in_content_file = "../../in/content.csv"
@@ -36,6 +38,7 @@ sarcasm_thr = 0.7 #If user has >0.7 prob of being sarcastic, label = 0
 content_df = pd.read_csv(in_content_file)
 users_df = pd.read_csv(in_users_file)
 
+@torch.inference_mode()
 def model_label(row):
     
     prompt = f"""Classify if the SPEAKER asserts they personally have ADHD.
@@ -49,30 +52,42 @@ Answer with exactly one word: YES or NO.
 Answer:"""
 
     try:
-        inputs = processor.apply_chat_template(
-            [{"role": "user", "content": [{"type": "text", "text": prompt}]}],
+        inputs = tokenizer.apply_chat_template(
+            [{"role": "user", "content": [{"type":"text","text":prompt}]}],
             add_generation_prompt=True,
             tokenize=True,
-            return_tensors="pt"
+            return_tensors="pt",
+            return_dict=True,
         )
+        
+        inputs = inputs.to(model.get_input_embeddings().weight.device)
+
 
         outputs = model.generate(
             **inputs,
             max_new_tokens=3,
-            do_sample=False
+            do_sample=False,
+            #pad_token_id=tokenizer.eos_token_id,
         )
 
-        response = processor.batch_decode(outputs[:,inputs['input_ids'].shape[-1]:], skip_special_tokens=True)[0]
+        input_length = inputs["input_ids"].shape[-1]
+        response = tokenizer.decode(
+            outputs[0, input_length:],
+            skip_special_tokens=True,
+        ).strip().upper()        
         
-        
-        if "YES" in response:
+        answer = response.split()[0].strip(".,!:;") if response else ""
+
+        if answer == "YES":
             row["has_ADHD_pattern_model"] = True
-        else:
+        elif answer == "NO":
             row["has_ADHD_pattern_model"] = False
+        else:
+            row["has_ADHD_pattern_model"] = None
         
     except Exception as e:
         print(f"Error processing: {e}")
-        row["has_ADHD_pattern_model"] = False
+        row["has_ADHD_pattern_model"] = None
 
     return row
 
@@ -95,7 +110,7 @@ def update_users(row):
 
 _, users_20 = train_test_split(
     users_df,
-    test_size=0.20,
+    test_size=0.30,
     random_state=SEED_VALUE,
     stratify=users_df["has_ADHD"]
 )
