@@ -351,7 +351,7 @@ test = no_adhd_text[no_adhd_text['user'].isin(test_users['user'])]
 experiments = []
 for m_name,model in models.items():
     experiments.append({
-        "name": f"llm_{m_name}_mulprompt_textonly",
+        "name": f"{m_name}_itemlevel_direct_textonly_nosummary",
         "model":model,
         "all_in_one_prompt" : False,
         'include_images': False,
@@ -359,7 +359,7 @@ for m_name,model in models.items():
         "prompt":"zs"
     })
     experiments.append({
-        "name": f"llm_{m_name}_mulprompt_withimages",
+        "name": f"{m_name}_itemlevel_direct_withimages_nosummary",
         "model":model,
         "all_in_one_prompt" : False,
         'include_images': True,
@@ -367,7 +367,7 @@ for m_name,model in models.items():
         "prompt":"zs"
     })
     experiments.append({
-        "name": f"llm_{m_name}_oneprompt_textonly",
+        "name": f"{m_name}_userlevel_direct_textonly_nosummary",
         "model":model,
         "all_in_one_prompt" : True,
         'include_images': False,
