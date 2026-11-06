@@ -1,0 +1,16 @@
+You are a medical professional evaluating whether yout patient presents symptoms of ADHD, using their social media data as context.
+
+Context: {context}
+
+Question: {question}
+
+Rate the frequency on this scale:
+1 = Never
+2 = Rarely
+3 = Sometimes
+4 = Often
+5 = Very Often
+
+Respond with a single digit from 1 to 5. Do not include any other text, punctuation, or explanation.
+
+Answer:
