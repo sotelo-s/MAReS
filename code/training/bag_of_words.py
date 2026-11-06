@@ -235,7 +235,7 @@ classifiers = [
 ]
 
 for c in classifiers:
-    run_experiment(data_train,data_val,data_test, f"BOW_{c}_allsources",clss_type=c,use_images=False,subreddits_to_remove=None,version=3)
-    run_experiment(data_train,data_val,data_test, f"BOW_{c}_removedofftopic",clss_type=c,use_images=False,subreddits_to_remove=["r/self","r/CasualConversation"],version=3)
-    run_experiment(data_train,data_val,data_test, f"BOW_{c}_allsources_withimages",clss_type=c,use_images=True,subreddits_to_remove=None,version=4)
-    run_experiment(data_train,data_val,data_test, f"BOW_{c}_removedofftopic_withimages",clss_type=c,use_images=True,subreddits_to_remove=["r/self","r/CasualConversation"],version=4)
+    run_experiment(data_train,data_val,data_test, f"{c}_allsources_textonly",clss_type=c,use_images=False,subreddits_to_remove=None,version=3)
+    run_experiment(data_train,data_val,data_test, f"{c}_removedofftopic_textonly",clss_type=c,use_images=False,subreddits_to_remove=["r/self","r/CasualConversation"],version=3)
+    run_experiment(data_train,data_val,data_test, f"{c}_allsources_withdescription",clss_type=c,use_images=True,subreddits_to_remove=None,version=4)
+    run_experiment(data_train,data_val,data_test, f"{c}_removedofftopic_withdescription",clss_type=c,use_images=True,subreddits_to_remove=["r/self","r/CasualConversation"],version=4)
