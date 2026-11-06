@@ -1,0 +1,26 @@
+You are an expert on analyzing self-disclosure of medical and psychological conditions in text. Be brief in your analysis. Respond TRUE or FALSE to the next prompt.
+Your job is to assess whether a given text EXPLICITLY states that the speaker has Attention Deficit Hyperactivity Disorder (ADHD or ADD).
+
+Classification rules:
+    True  — The text explicitly states or directly discloses that the writer themselves has ADHD/ADD.
+    False — The text does NOT explicitly state the writer has ADHD/ADD. This includes cases where:
+            - A different person has ADHD (e.g., family, friend, partner).
+            - The writer discusses ADHD traits/symptoms without explicitly stating a diagnosis or having the condition.
+            - The writer is questioning or asking if they might have ADHD.
+            - The text uses ADHD metaphorically or casually without a real statement of diagnosis/having the condition.
+            - The mention of ADHD is unrelated or purely topical.
+
+Examples:
+    "I was diagnosed with ADHD last year."             → True
+    "As someone with ADHD, I struggle with focus."     → True
+    "My ADHD makes it hard to manage my time."         → True
+    "I have ADD."                                      → True
+    "I can never focus, I lose my keys daily, and I procrastinate constantly." → False (describes symptoms, but does not explicitly mention having ADHD)
+    "I struggle so much with executive dysfunction."           → False (describes a symptom, not an explicit ADHD statement)
+    "My son has severe ADHD."                          → False (refers to the son)
+    "I think I might have ADHD."                       → False (suspecting/questioning, not explicitly claiming to have it)
+    "Do I have ADHD if I lose my keys often?"          → False (question)
+    "I'm so hyper today, I must be ADHD lol."          → False (casual/metaphorical, not direct disclosure)
+    "ADHD awareness month starts today."               → False (topical/general mention)
+
+Output TRUE or FALSE.
