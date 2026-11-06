@@ -21,6 +21,15 @@ user_file = "../../in/users.csv"
 content_file = "../../in/content.csv"
 images_folder = "../../in/media"
 out_folder = "../../out/experiments/llm"
+prompt_text_file = "./data/direct_textonly_prompt.txt"
+prompt_images_file = "./data/direct_withimages_prompt.txt"
+
+with open(prompt_text_file,"r",encoding="utf-8") as file:
+    TEXTONLY_BASE_PROMPT = file.read()
+    
+with open(prompt_images_file,"r",encoding="utf-8") as file:
+    WITHIMAGES_BASE_PROMPT = file.read()
+
 
 MIN_CONTENT = 15
 MIN_WORDS = 30
@@ -77,19 +86,7 @@ def classify_users(data,prompt_type,pipe,all_in_one_prompt,include_images,only_t
             user_data = data[data["id_x"]==user_id]
             texts = reduce_text(pipe,"\n".join(user_data["text"]))
             
-            prompt = f"""TASK: Binary classification.
-
-Context:
-{texts}
-
-Question: Does the context contain evidence consistent with ADHD?
-Rate the question on this scale:
-0 = No
-1 = Yes
-
-Respond with a single digit 0 or 1. Do not include any other text, punctuation, or explanation.
-
-Answer:"""
+            prompt = TEXTONLY_BASE_PROMPT.format(texts=texts)
 
             messages = [
                 {
@@ -165,34 +162,10 @@ Answer:"""
             if only_text_with_images:
                 continue
             
-            prompt = f"""TASK: Binary classification.
-
-Context:
-{text}
-
-Question: Does the context contain evidence consistent with ADHD?
-Rate the question on this scale:
-0 = No
-1 = Yes
-
-Respond with a single digit 0 or 1. Do not include any other text, punctuation, or explanation.
-
-Answer:"""
+            prompt = TEXTONLY_BASE_PROMPT.format(text=text)
             
         else:
-            prompt = f"""TASK: Binary classification.
-
-Context:
-{text}
-
-Question: Does the context and the images provided contain evidence consistent with ADHD?
-Rate the question on this scale:
-0 = No
-1 = Yes
-
-Respond with a single digit 0 or 1. Do not include any other text, punctuation, or explanation.
-
-Answer:"""
+            prompt = WITHIMAGES_BASE_PROMPT.format(text=text)
             
         messages = [
             {
