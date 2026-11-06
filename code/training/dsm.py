@@ -278,8 +278,8 @@ test = no_adhd_text[no_adhd_text['user'].isin(test_users['user'])]
 
 
 for m_name,model in models.items():
-    run_experiment(test_users,val_users,f"llm_{m_name}_oneprompt_questionnaire_nosummary",model,type="question",summary=False,version=1)
-    run_experiment(test_users,val_users,f"llm_{m_name}_oneprompt_questionnaire_summary",model,type="question",summary=True,version=1)
-    run_experiment(test_users,val_users,f"llm_{m_name}_oneprompt_criteria_nosummary",model,type="criteria",summary=False,version=1)
-    run_experiment(test_users,val_users,f"llm_{m_name}_oneprompt_criteria_summary",model,type="criteria",summary=True,version=1)
+    run_experiment(test_users,val_users,f"{m_name}_userlevel_questionnaire_textonly_nosummary",model,type="question",summary=False,version=1)
+    run_experiment(test_users,val_users,f"{m_name}_userlevel_questionnaire_textonly_summary",model,type="question",summary=True,version=1)
+    run_experiment(test_users,val_users,f"{m_name}_userlevel_criteria_textonly_nosummary",model,type="criteria",summary=False,version=1)
+    run_experiment(test_users,val_users,f"{m_name}_userlevel_criteria_textonly_summary",model,type="criteria",summary=True,version=1)
 
