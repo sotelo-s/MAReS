@@ -29,12 +29,20 @@ in_users_file = "../../in/users.csv"
 out_folder = "../../out/experiments/llm"
 dsm5_file = "./data/dsm5_adhd_criteria.txt"
 asrs_file = "./data/asrs.json"
+dsm5_prompt_file = "./data/dsm5_prompt.txt"
+asrs5_prompt_file = "./data/asrs5_prompt.txt"
 
 with open(dsm5_file, 'r',encoding="utf-8") as file:
     dsm5_criteria = file.read()
 
 with open(asrs_file, 'r',encoding="utf-8") as file:
     questions_asrs5 = json.load(file)["asrs-5"]
+    
+with open(dsm5_prompt_file, 'r',encoding="utf-8") as file:
+    DSM5_BASE_PROMPT = file.read()
+    
+with open(asrs5_prompt_file, 'r',encoding="utf-8") as file:
+    ASRS5_BASE_PROMPT = file.read()
 
 if not os.path.exists(f"{out_folder}"):
     os.makedirs(f"{out_folder}")
@@ -114,23 +122,8 @@ def dsm5_label(row,pipe,summary):
         context = reduce_text(pipe,"\n".join(no_adhd_text[no_adhd_text["user"]==row["user"]]["text"]))
 
     
-    prompt = f"""TASK: Binary classification.
-
-Criteria:
-{dsm5_criteria}
-
-
-Context:
-{context}
-
-Question: Does the context contain evidence consistent with ADHD?
-Rate the question on this scale:
-0 = No
-1 = Yes
-
-Respond with a single digit 0 or 1. Do not include any other text, punctuation, or explanation.
-
-Answer:"""
+    prompt = DSM5_BASE_PROMPT.format(dsm5_criteria=dsm5_criteria,context=context)
+    
 
     try:
         response = pipe(
@@ -183,23 +176,7 @@ def questionnaire(row,pipe,summary):
         Uses a LLM and a questionnaire to determine if user has ADHD.
         '''
         
-        prompt = f"""You are a medical professional evaluating whether yout patient presents symptoms of ADHD, using their social media data as context.
-
-Context: {context}
-
-Question: {question}
-
-Rate the frequency on this scale:
-1 = Never
-2 = Rarely
-3 = Sometimes
-4 = Often
-5 = Very Often
-
-Respond with a single digit from 1 to 5. Do not include any other text, punctuation, or explanation.
-
-Answer:"""
-    
+        prompt = ASRS5_BASE_PROMPT.format(context=context,question=question)
     
     
         try:
@@ -301,8 +278,8 @@ test = no_adhd_text[no_adhd_text['user'].isin(test_users['user'])]
 
 
 for m_name,model in models.items():
-    run_experiment(test_users,val_users,f"llm_{m_name}_oneprompt_questionnaire_nosummary",model,type="question",summary=False,version=1)
-    run_experiment(test_users,val_users,f"llm_{m_name}_oneprompt_questionnaire_summary",model,type="question",summary=True,version=1)
-    run_experiment(test_users,val_users,f"llm_{m_name}_oneprompt_criteria_nosummary",model,type="criteria",summary=False,version=1)
-    run_experiment(test_users,val_users,f"llm_{m_name}_oneprompt_criteria_summary",model,type="criteria",summary=True,version=1)
+    run_experiment(test_users,val_users,f"{m_name}_userlevel_questionnaire_textonly_nosummary",model,type="question",summary=False,version=1)
+    run_experiment(test_users,val_users,f"{m_name}_userlevel_questionnaire_textonly_summary",model,type="question",summary=True,version=1)
+    run_experiment(test_users,val_users,f"{m_name}_userlevel_criteria_textonly_nosummary",model,type="criteria",summary=False,version=1)
+    run_experiment(test_users,val_users,f"{m_name}_userlevel_criteria_textonly_summary",model,type="criteria",summary=True,version=1)
 

@@ -1,0 +1,13 @@
+TASK: Binary classification.
+
+Context:
+{text}
+
+Question: Does the context contain evidence consistent with ADHD?
+Rate the question on this scale:
+0 = No
+1 = Yes
+
+Respond with a single digit 0 or 1. Do not include any other text, punctuation, or explanation.
+
+Answer:

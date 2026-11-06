@@ -319,11 +319,11 @@ variants={
     "DistilBERT":"distilbert/distilbert-base-uncased",
     "ALBERT":"albert/albert-base-v2",
     "BioRedditBERT":"cambridgeltl/BioRedditBERT-uncased",
-    "RoBERTa-DA":"../../out/roberta-domain-adapted"
+    "ADHDoBERTa":"../../out/roberta-domain-adapted"
 }
 
 for name, variant in variants.items():
-    run_experiment(train,val,test,f"{name}_allsources",variant,False,None,3)
-    run_experiment(train,val,test,f"{name}_removedofftopic",variant,False,["r/self","r/CasualConversation"],3)
-    run_experiment(train,val,test,f"{name}_allsources_withimages",variant,True,None,3)
-    run_experiment(train,val,test,f"{name}_removedofftopic_withimages",variant,True,["r/self","r/CasualConversation"],3)
+    run_experiment(train,val,test,f"{name}_allsources_textonly",variant,False,None,3)
+    run_experiment(train,val,test,f"{name}_removedofftopic_textonly",variant,False,["r/self","r/CasualConversation"],3)
+    run_experiment(train,val,test,f"{name}_allsources_withdescription",variant,True,None,3)
+    run_experiment(train,val,test,f"{name}_removedofftopic_withdescription",variant,True,["r/self","r/CasualConversation"],3)
