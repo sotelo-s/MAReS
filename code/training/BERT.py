@@ -80,10 +80,10 @@ def run_experiment(data_train,data_val,data_test, name, bert_variant="bert-base-
         # encode the
         encoding = tokenizer(
                 texts,
-                #max_length=max_length,
+                max_length=max_length,
                 #padding="max_length", 
                 truncation=True, 
-                max_length=256
+                #max_length=256
             )
         
         encoding["labels"] = [int(label) for label in examples["has_ADHD"]]
@@ -102,6 +102,8 @@ def run_experiment(data_train,data_val,data_test, name, bert_variant="bert-base-
 
     if bert_variant == "cambridgeltl/BioRedditBERT-uncased":
         max = 512
+    if bert_variant == "../../out/roberta-domain-adapted":
+        max = 256
     else:
         max = None
         
